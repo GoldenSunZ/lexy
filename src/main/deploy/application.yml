@@ -1,0 +1,24 @@
+spring:
+  freemarker:
+    cache: true
+    charset: UTF-8
+    content-type: text/html
+    suffix: .html
+    template-loader-path: classpath:/WEB-INF/views/
+    expose-spring-macro-helpers: true
+    request-context-attribute: rca
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/lexywxdb?useUnicode=true&characterEncoding=gbk&zeroDateTimeBehavior=convertToNull&useSSL=false
+      username: system
+      password: Wxgzh@lexy99
+      initial-size: 5
+      driver-class-name: com.mysql.jdbc.Driver
+      max-active: 50
+      max-idle: 10
+      max-wait: 10000
+      test-on-borrow: true
+      min-idle: 5
+      validation-query: SELECT 1
+      test-while-idle: true
+      time-between-eviction-runs-millis: 18800
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lexy.auth.mapper.ModuleMapper">
+    <sql id="baseSelect">
+        SELECT
+            id,
+            name,
+            hidden
+        FROM mp_module
+    </sql>
+    <select id="listByFilter" resultMap="ResultMaps.Module">
+        <include refid="baseSelect"/>
+        WHERE hidden=0
+    </select>
+    <select id="selectById">
+        <include refid="baseSelect"/>
+        WHERE id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO mp_module (id, name, hidden)
+            VALUE (#{id}, #{name}, #{hidden})
+    </insert>
+    <update id="updateById">
+        UPDATE mp_module
+        <set>
+            <if test="null!=name and ''!=name">
+                name=#{name},
+            </if>
+            <if test="null!=hidden">
+                hidden=#{hidden},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="delete">
+        UPDATE mp_module
+        SET hidden = 1
+        WHERE id = #{id}
+    </update>
+</mapper>

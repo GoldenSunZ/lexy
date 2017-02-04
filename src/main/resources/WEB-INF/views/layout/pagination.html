@@ -1,0 +1,35 @@
+<#macro paging pagination action method="post">
+    <form id="pagination-form" action="${cpath}${action}" method="${method}">
+        <input hidden name="pageSize" value="${pagination.pageSize}"/>
+        <input hidden name="current" value="${pagination.current}"/>
+        <div class="page_outBox page_outBox form-pagination">
+            <#if pagination.current gt 1>
+                <a href="#${pagination.current-1}">&lsaquo; 上一页</a>
+            </#if>
+            <#assign ps=0..(pagination.end-pagination.start)/>
+            <#list ps as p>
+                <#if p+pagination.start==pagination.current>
+                    <span class="current">${p+pagination.start}</span>
+                    <#else>
+                        <a href="#${p+pagination.start}">${p+pagination.start}</a>
+                </#if>
+            </#list>
+            <#if pagination.end gt 5>
+                <#if pagination.end lt pagination.maxPage-1 >
+                    <span>……</span>
+                </#if>
+                <a href="#${pagination.maxPage}">${pagination.maxPage}max</a>
+            </#if>
+            <#if (pagination.current lt pagination.maxPage)>
+                <a href="#${pagination.current+1}">下一页 &rsaquo;</a>
+            </#if>
+        </div>
+    </form>
+    <script type="text/javascript">
+        $('#pagination-form').on('click', 'a', function () {
+            var target = $(this);
+            $('[name="current"]').val(target.attr('href').replace('#', ''));
+            $('#pagination-form').submit();
+        });
+    </script>
+</#macro>

@@ -1,0 +1,42 @@
+<#assign cpath=rca.contextPath>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>莱克权限管理系统-登录</title>
+	<link rel="stylesheet" href="${cpath}/css/basic.css"/>
+	<link rel="stylesheet" href="${cpath}/css/login.css"/>
+	<script type="text/javascript" src="${cpath}/js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="${cpath}/js/main.js"></script>
+</head>
+<body class="login-bd">
+<div class="login-box">
+	<h1 class="login-logo">
+		<img src="${cpath}/images/logo.jpg"/>
+		<span>欢迎使用莱克权限管理系统</span>
+	</h1>
+
+	<form class="login-fr" id="formSubmit" method="post" action="${cpath}/login/doLogin">
+		<div class="input">
+			<input class="input__field" type="text" name="username"/>
+			<label class="input__label">
+				<span class="input__label-content">用户名</span>
+			</label>
+			<div class="input__line"><span class="line-blue"></span><span class="line-grey"></span></div>
+		</div>
+		<div class="input">
+			<input class="input__field" type="password" name="password"/>
+			<label class="input__label">
+				<span class="input__label-content">密码</span>
+			</label>
+			<div class="input__line"><span class="line-blue"></span><span class="line-grey"></span></div>
+		</div>
+		<#if (loginError)??>
+			<div class="tip red">${Request.errorMsg} </div>
+		</#if>
+		<input type="submit" class="login-btn" value="马上登陆" />
+	</form>
+	<div class="copyright">copyright © 苏州莱克电气股份有限公司版权所有</div>
+</div>
+</body>
+</html>

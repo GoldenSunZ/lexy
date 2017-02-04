@@ -1,0 +1,44 @@
+<#import "layout/layout.html" as layout/>
+<#import "layout/pagination.html" as page/>
+<@layout.page selId="sys">
+<!-- content -->
+<div class="content">
+    <ol class="header_nav">
+        <li><span class="icon-navHome"></span></li>
+        <li><a href="${cpath}/" class="f12Grey">权限设置</a></li>
+        <li><span class="icon-arrow-right"></span></li>
+        <li><span class="f12Grey">资源管理</span></li>
+    </ol>
+    <div class="outBox">
+        <div class="outBox-inner">
+            <div class="table-div txt_center">
+                <table border="0" bordercolor="#E5EAEE" cellpadding="0" cellspacing="1" rules="rows">
+                    <tbody>
+                    <tr class="table-title">
+                        <td width="70">序号</td>
+                        <td>系统名称</td>
+                    </tr>
+                    <#if (systems?size == 0) >
+                        <tr>
+                            <td colspan="2">
+                                没有数据...
+                            </td>
+                        </tr>
+                        <#else>
+                            <#list systems as item>
+                                <tr>
+                                    <td>${(pagination.current-1)*pagination.pageSize+item_index+1}</td>
+                                    <td>${item.name}</td>
+                                </tr>
+                            </#list>
+                    </#if>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-page">
+                <@page.paging pagination=pagination action="/module/list" />
+            </div>
+        </div>
+    </div>
+</div>
+</@layout.page>

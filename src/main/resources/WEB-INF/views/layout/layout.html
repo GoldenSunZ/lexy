@@ -1,0 +1,182 @@
+<#global cpath=rca.contextPath>
+<#macro page selId="role">
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"    "http://www.w3.org/TR/html4/loose.dtd">
+    <html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+        <title>系统管理</title>
+        <link rel="stylesheet" href="${cpath}/css/basic.css"/>
+        <link rel="stylesheet" href="${cpath}/css/select2.min.css"/>
+        <link rel="stylesheet" href="${cpath}/css/jquery.pnotify.css"/>
+        <link rel="stylesheet" href="${cpath}/css/jquery.mCustomScrollbar.css"/>
+        <script type="text/javascript" src="${cpath}/js/jquery-1.12.4.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/select2.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/sidebar.js"></script>
+        <script type="text/javascript" src="${cpath}/js/showBox1.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.pnotify.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/main.js"></script>
+    </head>
+    <body>
+    <!-- nav bar -->
+    <div class="nav-bar">
+        <h1 class="title"><img src="${cpath}/images/logo.jpg" alt="莱克"/><span>莱克权限管理系统</span></h1>
+        <ul class="bar-right">
+            <li class="name">
+                <span>欢迎,
+                    <#if Session.session_user?exists>
+                         ${Session.session_user.nickname}
+                        <#else>
+                            管理员
+                    </#if>
+                </span>
+                <br>
+                &nbsp;&nbsp;<a href="javascript:void(0)" id="showEditPassword" style="color: #3875d7">修改密码</a>
+            </li>
+            <li class="login-out"><a class="icon-off" href="${cpath}/logout"><img src="${cpath}/images/icon-logout.png" height="100%" alt="log out"></a></li>
+        </ul>
+    </div>
+    <!-- content -->
+    <div class="content-wrapper">
+
+        <!-- nav left -->
+        <div class="sidebar open">
+            <div class="sidebar_toggle"><span class="txt">关闭</span><span class="icon-closeNav"></span></div>
+            <ul class="sidebar_menu">
+                <li class="sidebar_hasChild on">
+                    <a class="sidebar_title" href="javascript:void(0);"><span class="icon-legal"></span><span
+                            class="menu_title">权限设置</span><span class="icon-arrow-right"></span></a>
+                    <ol class="sidebar_Child_ol">
+                        <#if selId="role">
+                            <li><a href="${cpath}/role-mgr.html" class="active">角色管理</a></li>
+                            <#else>
+                                <li><a href="${cpath}/role-mgr.html">角色管理</a></li>
+                        </#if>
+                        <#if selId="user">
+                            <li><a href="${cpath}/user-mgr.html" class="active">用户管理</a></li>
+                            <#else>
+                                <li><a href="${cpath}/user-mgr.html">用户管理</a></li>
+                        </#if>
+                        <#if selId="sys">
+                            <li><a href="${cpath}/sys-mgr.html" class="active">系统管理</a></li>
+                            <#else>
+                                <li><a href="${cpath}/sys-mgr.html">系统管理</a></li>
+                        </#if>
+                        <#if selId="res">
+                            <li><a href="${cpath}/res-mgr.html" class="active">资源管理</a></li>
+                            <#else>
+                                <li><a href="${cpath}/res-mgr.html">资源管理</a></li>
+                        </#if>
+                    </ol>
+                </li>
+            </ul>
+        </div>
+
+        <form id="change_password_form" method="post">
+            <div class="pop_outBox" id="change_password" style="display: none;">
+                <div class="pop_innerBox w700">
+                    <h4 class="outBox-title">修改密码</h4>
+                    <div class="maxH300">
+                        <ul class="pop_judge_ul">
+                            <li>
+                                <div class="lineH30">原密码：</div>
+                                <div><label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                                    <input id="oldpassword" type="password" class="wp100" name="oldpassword" required maxlength="50" value=""/></label></div>
+                            </li>
+                            <li>
+                                <div class="lineH30">新密码：</div>
+                                <div><label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                                    <input id="newpassword" type="password" class="wp100" name="newpassword" required maxlength="50" value=""/></label></div>
+                            </li>
+                            <li>
+                                <div class="lineH30">确认密码：</div>
+                                <div>
+                                    <label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                                        <input id="confirmpassword" type="password" class="wp100" name="confirmpassword" required maxlength="50" value=""/></label></div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="button_Box">
+                        <button class="cancel_btn w325 marginR10 left" id="cancel_changepw_btn">取消</button>
+                        <button class="confirm_btn w325" id="confirm_changepw_btn">保存</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        -->
+        <!-- content -->
+        <#nested/>
+        <!-- content -->
+    </div>
+    <script type="text/javascript">
+        Window.Tips = {};
+        Window.Tips.errorMsg = '${errMsg?if_exists}';
+        Window.Tips.operation = '${operation?if_exists}';
+        var op = Window.Tips.operation;
+        if (''!=op) {
+            var title = "创建";
+            if (op === 'delete') {
+                title = "删除";
+            } else if (op == 'assign') {
+                title = "保存";
+            }else if(op == 'modify'){
+                title = "修改";
+            }
+            var status = "成功";
+            var type = "success";
+            if (Window.Tips.errorMsg) {
+                status = "失败";
+                type = "error";
+            }
+
+            $(function () {
+                var options = {
+                    title: title + status,
+                    type: type,
+                    delay:2500
+                };
+                if(type === 'error'){
+                    options.text = Window.Tips.errorMsg;
+                }
+                $.pnotify(options);
+            });
+        }
+
+        //新增
+        $('#showEditPassword').click(function () {
+            var $pop_outBox = $('#change_password'), $inHeight = $pop_outBox.find('.pop_innerBox').height(), $h = $pop_outBox.height();
+            $pop_outBox.show();
+            if ($('.pop_innerBox').attr("style") == undefined) {
+                $('.pop_innerBox').css('marginTop', ($pop_outBox.height() - $pop_outBox.find('.pop_innerBox').height()) / 2);
+                $(".pop_innerBox > div").mCustomScrollbar({
+                    theme: "minimal-dark"
+                });
+            }
+            return false;
+        });
+
+        $('#cancel_changepw_btn').click(function () {
+            $('#change_password').hide();
+        });
+        $('#confirm_changepw_btn').click(function () {
+            //$('#change_password_form').trigger('submit');
+            //$('#change_password').hide();
+
+//            var oldPassword =$('#oldpassword').val();
+//            var newPassword = $('#newpassword').val();
+//            var comfirmPassword = $('')
+
+            var cpData = $('#change_password_form').serialize();
+
+            $.post("${cpath}/updpsw", cpData, function (data, status) {
+                if (status == "success") {
+                    $("#result").html(data);
+                }
+            });
+        });
+
+    </script>
+    </body>
+    </html>
+</#macro>

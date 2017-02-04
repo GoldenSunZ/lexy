@@ -1,0 +1,303 @@
+<#import "layout/layout.html" as layout />
+<#import "layout/pagination.html" as page/>
+<@layout.page selId="role">
+<!-- content -->
+<style type="text/css">
+    .check_outBox .res-name {}
+</style>
+<div class="content">
+    <ol class="header_nav">
+        <li><span class="icon-navHome"></span></li>
+        <li><a href="${cpath}/" class="f12Grey">权限设置</a></li>
+        <li><span class="icon-arrow-right"></span></li>
+        <li><span class="f12Grey">角色管理</span></li>
+    </ol>
+    <div class="outBox">
+        <div class="outBox-inner">
+            <div class="input_button" style="float: none;">
+                <button class="blueBg wp100" id="add_btn">新增</button>
+            </div>
+        </div>
+    </div>
+    <div class="outBox">
+        <div class="outBox-inner">
+            <div class="table-div txt_center">
+                <table border="0" bordercolor="#E5EAEE" cellpadding="0" cellspacing="1" rules="rows">
+                    <tbody>
+                    <tr class="table-title">
+                        <td width="70">序号</td>
+                        <td>角色名称</td>
+                        <td width="200">操作</td>
+                    </tr>
+                    <#if (roles?size == 0) >
+                        <tr>
+                            <td colspan="3">
+                                没有数据...
+                            </td>
+                        </tr>
+                        <#else>
+                            <#list roles as item>
+                                <tr>
+                                    <td>${(pagination.current-1)*pagination.pageSize+item_index+1}</td>
+                                    <td>${item.name}</td>
+                                    <td bind-data-id="${item.id}" bind-data-resources="${item.assignedResources}" bind-data-name="${item.name!}">
+                                        <#if item.isBuiltIn!false >
+                                            <button class="greyBg f12" disabled="disabled">编辑</button>
+                                            <button class="greyBg f12" disabled="disabled">删除</button>
+                                            <button class="greyBg f12" disabled="disabled">授权</button>
+                                        <#else>
+                                            <button class="blueBg f12">编辑</button>
+                                            <button class="redBg f12">删除</button>
+                                            <button class="blueBg f12">授权</button>
+                                        </#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                    </#if>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-page">
+                <@page.paging pagination=pagination action="/role/list" />
+            </div>
+        </div>
+    </div>
+    <div class="pop_outBox" id="assign-resources" style="display:none">
+        <div class="pop_innerBox w700">
+            <h4 class="outBox-title">授权设置</h4>
+
+            <div class="maxH300">
+                <ul class="pop_judge_ul">
+                    <li>
+                        <div class="lineH30">选择授权系统：</div>
+                        <div>
+                            <div class="pop_textarea paddingL_R10">
+                                <select id="ledge" style="width: 100%;">
+                                    <option selected="selected">请选择系统管理员要授权的系统</option>
+                                    <#list systems as item>
+                                        <option value="${item.id}">${item.name}</option>
+                                    </#list>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                    <#if resources?size==0>
+                        <li>无数据 ....</li>
+                        <#else>
+                            <#list resources?keys as resKey>
+                                <#assign isStart = false>
+                                    <li class="borderB1" module-id="${resKey}">
+                                <#assign resList=resources[resKey] >
+                                    <#if resList?size==0>
+                                        <div>
+                                            <ul class="check_outBox pop_check">
+                                                没有数据 ...
+                                    </#if>
+                                    <#list  resList as res>
+                                        <#if !(res.pid?has_content)>
+                                            <#if isStart>
+                                                </ul>
+                                               </div>
+                                            </li>
+                                            <li class="borderB1" module-id="${resKey}">
+                                            </#if>
+                                            <div class="check_outBox txt_left">
+                                                <input type="checkbox" value="${res.id!}">
+                                                <span class="icon-input"></span>
+                                                <span class="res-name">${res.text!}</span>
+                                            </div>
+                                            <div>
+                                            <ul class="check_outBox pop_check new-line">
+                                        <#else>
+                                             <#if !isStart>
+                                                 <div class="check_outBox txt_left elseif">&nbsp;</div>
+                                                 <div>
+                                                 <ul class="check_outBox pop_check">
+                                             </#if>
+                                            <li class="check_outBox ${res.pid?has_content?string('yes','no')}">
+                                                <input value="${res.id}" name="resourceId" type="checkbox"><span
+                                                class="icon-input"></span>
+                                                <span class="res-name">${res.text}</span>
+                                            </li>
+                                        </#if>
+                                        <#assign isStart=true >
+                                    </#list>
+                                    </ul>
+                                    </div>
+                                </li>
+                            </#list>
+                    </#if>
+                </ul>
+            </div>
+            <div class="button_Box">
+                <button class="cancel_btn w325 marginR10 left" id="cancel_btn">取消</button>
+                <button class="confirm_btn w325" id="confirm_btn">保存</button>
+            </div>
+        </div>
+    </div>
+    <form id="role-create" method="post" action="/role/create">
+        <input hidden name="name"/>
+    </form>
+    <form id="role-update" method="post" action="/role/modify">
+        <input hidden name="name"/>
+        <input hidden name="id"/>
+    </form>
+    <form id="role-drop" method="post" action="/role/drop">
+        <input hidden name="id"/>
+    </form>
+    <form id="role-assign-res" method="post" action="/role/assign-resources">
+        <input hidden name="resources"/>
+        <input hidden name="roleId"/>
+        <input hidden name="moduleId"/>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        //checkbox的样式变换
+        $('input[type=checkbox]').each(function () {
+            $(this).click(function () {
+                var $this = $(this);
+                if ($this.prop('checked')) {
+                    $this.siblings('.icon-input').removeClass().addClass('icon-input-checked').prev('input').prop('checked','checked');
+                } else {
+                    $this.siblings('.icon-input-checked').removeClass().addClass('icon-input').removeProp('checked');
+                }
+            })
+        });
+
+        $('.check_outBox.txt_left input').click(function () {
+            var $this = $(this), $checked = $this.is(':checked');
+            if ($checked) {
+                $this.siblings('.icon-input').removeClass().addClass('icon-input-checked');
+                $this.parent().siblings('div').find('.icon-input').removeClass().addClass('icon-input-checked');
+            } else {
+                $this.siblings('.icon-input-checked').removeClass().addClass('icon-input');
+                $this.parent().siblings('div').find('.icon-input-checked').removeClass().addClass('icon-input');
+            }
+            $this.siblings('div').find('input[type=checkbox]').attr("checked", $checked);
+        });
+
+
+        $('#add_btn').click(function () {
+            var $json = {
+                "title": "新增角色",
+                "width": "w700",
+                "show_type": "editorBox",
+            };
+            $('.content').showTip($json);
+            var val = $(this).parent().siblings('div').find('input').val();
+            $('.confirm_btn').click(function () {
+                var val = $(this).parent().siblings('div').find('input').val();
+                if ($.trim(val)=='') {
+					$.pnotify({
+						title: '提示',
+						text: '角色名称不能为空',
+						type: 'info'
+					});
+				} else {
+					var form = $('#role-create');
+	                form.find('[name="name"]').val(val);
+	                form.submit();
+				}
+            });
+        });
+
+        $('td button:first-child').click(function () {
+            var par = $(this).parent();
+            var id = par.attr('bind-data-id');
+            var name = par.attr('bind-data-name');
+            var $json = {
+                "title": "更改角色名称",
+                "width": "w700",
+                "show_type": "editorBox",
+                "editor_type": "系统管理员",
+                "data": {id: id, name: name}
+            };
+            $('.content').showTip($json);
+            $('.confirm_btn').click(function () {
+                var val = $(this).parent().siblings('div').find('input').val();
+                var form = $('#role-update');
+                form.find('[name="name"]').val(val);
+                form.find('[name="id"]').val(id);
+                form.submit();
+            });
+        });
+        $('td button.redBg.f12').click(function () {
+            var $this = $(this);
+            var par = $this.parent();
+            var id = par.attr('bind-data-id');
+            var name = par.attr('bind-data-name');
+            var $json = {
+                "title": "提示",
+                "content": "你确定要删除角色 [" + name + "] 吗?",
+                "show_type": "TipBox",
+                "data": {id: id}
+            };
+            $('.content').showTip($json);
+            $('.confirm_btn').click(function () {
+                var form = $('#role-drop');
+                form.find('[name="id"]').val(id);
+                form.submit();
+            });
+        });
+        $('td button:last-child').click(function () {
+            var $pop_outBox = $('#assign-resources'), $inHeight = $pop_outBox.find('.pop_innerBox').height(), $h = $pop_outBox.height();
+            var $role = $('#role-assign-res');
+            var parent = $(this).parent();
+            var roleId = parent.attr('bind-data-id');
+            var resources = parent.attr('bind-data-resources'); // init
+            var split = resources.split(";");
+            $('[name="resourceId"]').next('span').removeClass('icon-input-checked').addClass('icon-input');
+            if(split.length>0) {
+                for(var i=0;i<split.length;i++){
+                    var rid = split[i];
+                    console.log(rid);
+                    $('[name="resourceId"][value="'+rid+'"]').prop('checked',"checked").next('span').addClass('icon-input-checked').removeClass('icon-input');
+                }
+            }
+            $role.find('[name="resources"]').val('');
+            $role.find('[name="roleId"]').val(roleId);
+            $pop_outBox.show();
+            if ($('.pop_innerBox').attr("style") == undefined) {
+                $('.pop_innerBox').css('marginTop', ($pop_outBox.height() - $pop_outBox.find('.pop_innerBox').height()) / 2);
+                $(".pop_innerBox > div").mCustomScrollbar({
+                    theme: "minimal-dark"
+                });
+            }
+
+        });
+
+        $('#cancel_btn').click(function () {
+            $('#assign-resources').hide();
+        });
+        $('#confirm_btn').click(function () {
+            var $borderB1 = $('.borderB1:visible');
+            if($borderB1.length>0){
+                var moduleId  = $borderB1.first().attr('module-id');
+                var res = [];
+                var find = $borderB1.find('[name="resourceId"]:checked');
+                if(find.length > 0){
+                    find.each(function () {
+                        var t = $(this).val();
+                        res.push(t);
+                    });
+                    var $role = $('#role-assign-res');
+                    $role.find('[name="resources"]').val(res.join(";"));
+                    $role.find('[name="moduleId"]').val(moduleId);
+                    $role.submit();
+                }
+            }
+
+            $('#assign-resources').hide();
+        });
+        //下拉选择select
+        $('.borderB1').hide();
+        $('#ledge').select2();
+        $('#ledge').change(function(){
+            var id = $(this).val();
+            $('.borderB1').hide();
+            $('[module-id="'+id+'"]').show();
+        });
+    });
+</script>
+</@layout.page>

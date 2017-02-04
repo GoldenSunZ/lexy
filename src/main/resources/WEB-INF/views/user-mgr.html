@@ -1,0 +1,190 @@
+<#import "layout/layout.html" as layout/>
+<#import "layout/pagination.html" as page/>
+<@layout.page selId="user">
+<!-- content -->
+<div class="content">
+    <ol class="header_nav">
+        <li><span class="icon-navHome"></span></li>
+        <li><a href="${cpath}" class="f12Grey">权限设置</a></li>
+        <li><span class="icon-arrow-right"></span></li>
+        <li><span class="f12Grey">用户管理</span></li>
+    </ol>
+    <div class="outBox">
+        <div class="outBox-inner">
+            <div class="input_button" style="float: none;">
+                <button class="blueBg wp100" id="pro_add">新增</button>
+            </div>
+        </div>
+    </div>
+    <div class="outBox">
+        <div class="outBox-inner">
+            <div class="table-div txt_center">
+                <table border="0" bordercolor="#E5EAEE" cellpadding="0" cellspacing="1" rules="rows">
+                    <tbody>
+                    <tr class="table-title">
+                        <td width="70">序号</td>
+                        <td width="90">ID</td>
+                        <td width="130">姓名</td>
+                        <td>拥有角色</td>
+                        <td width="100">操作</td>
+                    </tr>
+                    <#if users?size==0>
+                        <tr>
+                            <td colspan="4">没有数据 ...</td>
+                        </tr>
+                        <#else>
+                            <#list users as item>
+                                <tr>
+                                    <td>${(pagination.current-1)*pagination.pageSize +item_index+1}</td>
+                                    <td>${item.username!}</td>
+                                    <td>${item.nickname!}</td>
+                                    <td>
+                                        <#list item.roles as role>
+                                            ${role.name!}
+                                            <#if role_has_next>、</#if>
+                                        </#list>
+                                    </td>
+                                    <td>
+                                        <button class="blueBg f12" bind-data-id="${item.id}" bind-data-roles="${item.assignedRoles}">角色</button>
+                                        <#if item.isBuiltIn!false>
+                                            <button class="greyBg f12" disabled="disabled">删除</button>
+                                            <#else>
+                                                <button class="redBg f12 drop-user" bind-data-id="${item.id}">删除</button>
+                                        </#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                    </#if>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-page">
+                <@page.paging pagination=pagination action="/user/list" />
+            </div>
+        </div>
+    </div>
+</div>
+<form method="post" action="${cpath}/user/drop" id="user-drop">
+    <input type="hidden" name="userId"/>
+</form>
+<form id="create-user" method="post" action="${cpath}/user/create">
+<div class="pop_outBox" id="add-user" style="display: none;">
+    <div class="pop_innerBox w700">
+        <h4 class="outBox-title">新增用户</h4>
+        <div class="maxH300">
+            <ul class="pop_judge_ul">
+                <li>
+                    <div class="lineH30">ID：</div>
+                    <div><label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                        <input type="text" class="wp100" name="username" required maxlength="50" value=""/></label></div>
+                </li>
+                <li>
+                    <div class="lineH30">姓名：</div>
+                    <div><label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                        <input type="text" class="wp100" name="nickname" maxlength="50" value=""/></label></div>
+                </li>
+                <li>
+                    <div class="lineH30">密码：</div>
+                    <div>
+                        <label class="pop_textarea" style="display:block; padding: 0 10px; width: 533px;">
+                            <input type="text" class="wp100" name="password" required maxlength="50" value="" placeholder="用户密码默认123"/></label></div>
+                </li>
+            </ul>
+        </div>
+        <div class="button_Box">
+            <button class="cancel_btn w325 marginR10 left" id="cancel_btn">取消</button>
+            <button class="confirm_btn w325" id="confirm_btn">保存</button>
+        </div>
+    </div>
+</div>
+</form>
+<div class = "pop_outBox" id="addRole" style = "display: none;">
+    <div class = "pop_innerBox w700">
+        <h4 class = "outBox-title">角色选择</h4>
+
+        <div class = "maxH300">
+            <ul class = "pop_judge_ul">
+                <li>
+                    <div class = "lineH30">选择角色：</div>
+                    <div>
+                        <div class = "pop_textarea paddingL_R10">
+                            <select id = "JiaoSe" multiple style = "width: 100%;">
+                                <#if roles?size==0 >
+                                    <option value="">--没有数据--</option>
+                                <#else>
+                                    <#list roles as role>
+                                    <option class="pop-role" value="${role.id}">${role.name}</option>
+                                    </#list>
+                                </#if>
+                            </select></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class = "button_Box">
+            <button class = "cancel_btn w325 marginR10 left" id = "cancel_btn1">取消</button>
+            <button class = "confirm_btn w325" id = "confirm_btn1">保存</button>
+        </div>
+    </div>
+</div>
+<form id="user-assign" action="${cpath}/user/assign-roles" method="post">
+    <input type="hidden" name="userId"/>
+    <input type="hidden" name="roles"/>
+</form>
+<script type="text/javascript">
+    $(function () {
+        //新增
+        $('#pro_add').click(function () {
+            var $pop_outBox = $('#add-user'), $inHeight = $pop_outBox.find('.pop_innerBox').height(), $h = $pop_outBox.height();
+            $pop_outBox.show();
+            if ($('.pop_innerBox').attr("style") == undefined) {
+                $('.pop_innerBox').css('marginTop', ($pop_outBox.height() - $pop_outBox.find('.pop_innerBox').height()) / 2);
+                $(".pop_innerBox > div").mCustomScrollbar({
+                    theme: "minimal-dark"
+                });
+            }
+            return false;
+        });
+
+        $('#cancel_btn').click(function () {
+            $('#add-user').hide();
+        });
+        $('#confirm_btn').click(function () {
+            $('#create-user').trigger('submit');
+            $('#add-user').hide();
+        });
+
+        //下拉选择select
+
+//        $('#GangWei').select2();
+        var $user = $('#user-assign');
+        $('button.blueBg.f12').click(function () {
+            $('.pop_innerBox').css('marginTop', ($('.pop_outBox').height() - $('.pop_outBox').find('.pop_innerBox').height()) / 2);
+            var split = $(this).attr('bind-data-roles').split(";");
+            var userId = $(this).attr('bind-data-id');
+            $user.find('[name="userId"]').val(userId);
+            $user.find('[name="roles"]').val("");
+            $('#JiaoSe').val(split);
+            $('#JiaoSe').select2();
+            $('#addRole').show();
+        });
+
+        $('#cancel_btn1').click(function () {
+            $('.pop_outBox').hide();
+        });
+        $('#confirm_btn1').click(function () {
+            var val = $('#JiaoSe').val();
+            $user.find('[name="roles"]').val(val.join(";"));
+            $user.submit();
+            $('.pop_outBox').hide();
+        });
+
+        $('.drop-user').click(function(){
+            var userId = $(this).attr('bind-data-id');
+            var $user2 = $('#user-drop');
+            $user2.find('[name="userId"]').val(userId);
+            $user2.submit();
+        });
+    });
+</script>
+</@layout.page>

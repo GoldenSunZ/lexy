@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ResultMaps">
+    <resultMap id="Module" type="cn.lexy.auth.model.Module" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="resources" ofType="cn.lexy.auth.model.Resource" select="cn.lexy.auth.mapper.ResourceMapper.getResourcesByModuleId" column="id"/>
+    </resultMap>
+
+    <resultMap id="Resource" type="cn.lexy.auth.model.Resource" autoMapping="true">
+        <id column="id" property="id"/>
+        <association property="module" autoMapping="true" columnPrefix="module_" javaType="cn.lexy.auth.model.Module"/>
+    </resultMap>
+
+    <resultMap id="Role" type="cn.lexy.auth.model.Role" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="grantedResources" ofType="cn.lexy.auth.model.Resource" select="cn.lexy.auth.mapper.ResourceMapper.getResourcesByRoleId" column="id"/>
+    </resultMap>
+
+    <resultMap id="User" type="cn.lexy.auth.model.User" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="roles" ofType="cn.lexy.auth.model.Role" select="cn.lexy.auth.mapper.RoleMapper.getRolesByUserId" column="id"/>
+    </resultMap>
+</mapper>

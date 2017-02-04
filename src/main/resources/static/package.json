@@ -1,0 +1,80 @@
+{
+  "email_box": [
+    {
+      "name": "王某某（3487691）",
+      "reason": "格式不对，不够深刻！"
+    },
+    {
+      "name": "刘某某（3487691）",
+      "reason": "文档有问题，修改后再重新提交!"
+    },
+    {
+      "name": "陈某某（3487691）",
+      "reason": "这样做比较麻烦，我们可以用微软提供的 SuperPreviewIE 工具来查看各个IE版本中效果"
+    }
+  ],
+  "judge_box": [
+    {
+      "reason": "对该目标完成的非常出色，考核中对各项目内容都掌握的非常好。"
+    },
+    {
+      "reason": "文档有问题，修改后再重新提交!"
+    }
+  ],
+  "reject_history": [
+    {
+      "time": "2016-06-04",
+      "reason": "格式不对，不够深刻！"
+    },
+    {
+      "time": "2016-06-04",
+      "reason": "文档有问题，修改后再重新提交!"
+    },
+    {
+      "time": "2016-06-04",
+      "reason": "这样做比较麻烦，我们可以用微软提供的 SuperPreviewIE 工具来查看各个IE版本中效果"
+    }
+  ],
+  "pingsheng": {
+    "reveiwList": {
+      "review_target": "了解产品结构、装配顺序、工作难点、了解产品结构、装配顺序、工作难点了解产品结构、装配顺序、工作难点、找出生产线中的不合理",
+      "reveiw_material": "产线分析报告（1份）",
+      "reveiw_file": [
+        {
+          "fileName": "装配顺序报告",
+          "fileAdd": "download/file.doc"
+        },
+        {
+          "fileName": "产线分析报告",
+          "fileAdd": "download/file2.doc",
+          "isNew": true
+        }
+      ],
+      "imm_review_comment": "1、工厂生产运营模式\n2、工厂其他部门分工与职责\r3、工厂运营基本硬件设施原理与操作",
+      "review_comment": "1、工厂生产运营模式\n2、工厂其他部门分工与职责\r3、工厂运营基本硬件设施原理与操作",
+      "review_reason": "文档有问题，修改后再重新提交！这样做比较麻烦,我们可以用微软提供的SuperPreviewIE工具来查看各个IE版本中效果"
+    }
+  },
+  "growProject":[
+    {
+      "Project_target":"工序流程图",
+      "Project_material": "产线分析报告（1份）",
+      "Project_code":"3"
+    },
+    {
+      "Project_target":"工装设备清单",
+      "Project_material": "",
+      "Project_code":"3"
+    },
+    {
+      "Project_target":"关键岗位清单",
+      "Project_material": "",
+      "Project_code":"3"
+    },
+    {
+      "Project_target":"标准包装初稿",
+      "Project_material": "",
+      "Project_code":"3"
+    }
+  ]
+}

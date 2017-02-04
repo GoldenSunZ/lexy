@@ -1,0 +1,89 @@
+<#import "layout/layout.html" as layout>
+    <@layout.page selId="res">
+    <!-- content -->
+    <div class="content">
+        <ol class="header_nav">
+            <li><span class="icon-navHome"></span></li>
+            <li><a href="${cpath}/" class="f12Grey">权限设置</a></li>
+            <li><span class="icon-arrow-right"></span></li>
+            <li><span class="f12Grey">系统管理</span></li>
+        </ol>
+        <div class="outBox">
+            <div class="outBox-inner">
+                <div class="paddingL_R10 w300" style="background-color: #eef1f4">
+                    <form id="switch-module" method="post" action="${cpath}/res/list">
+                        <select id="GangWei" name="moduleId" style="width: 100%;">
+                            <#list systems as item>
+                                <#if item.id== moduleId >
+                                    <option value="${item.id}" selected="selected">${item.name}</option>
+                                    <#else>
+                                        <option value="${item.id}">${item.name}</option>
+                                </#if>
+                            </#list>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="outBox">
+            <div class="outBox-inner">
+                <div class="table-div">
+                    <table border="0" bordercolor="#E5EAEE" cellpadding="0" cellspacing="1" rules="rows">
+                        <tbody>
+                        <tr class="table-title">
+                            <td width="70" align="center">序号</td>
+                            <td width="200">菜单名称</td>
+                            <td>菜单地址</td>
+                        </tr>
+                        <#if resources?size==0>
+                            <tr>
+                                <td colspan="3">没有数据 ...</td>
+                            </tr>
+                            <#else>
+                                <#list resources as item>
+                                    <#if !(item.pid?has_content)>
+                                        <tr bgcolor="#F5F5F5">
+                                            <td>&nbsp;</td>
+                                            <td>${item.text}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <#else>
+                                            <tr>
+                                                <td align="center">${item.seq}</td>
+                                                <td>${item.text!}</td>
+                                                <td>${item.url!}</td>
+                                            </tr>
+                                    </#if>
+                                </#list>
+                        </#if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            //checkbox的样式变换
+            $('input[type=checkbox]').each(function () {
+                $(this).click(function () {
+                    var $this = $(this);
+                    if ($this.prop('checked')) {
+                        $this.siblings('.icon-input').removeClass().addClass('icon-input-checked');
+                    } else {
+                        $this.siblings('.icon-input-checked').removeClass().addClass('icon-input');
+                    }
+                })
+            });
+
+            //下拉选择select
+            $('#JieDuan').select2();
+            $('#GangWei').select2();
+
+            $('#GangWei').change(function () {
+                $('#switch-module').submit();
+            });
+        });
+    </script>
+</@layout.page>

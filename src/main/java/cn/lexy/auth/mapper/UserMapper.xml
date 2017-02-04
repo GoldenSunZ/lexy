@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lexy.auth.mapper.UserMapper">
+
+    <resultMap id="UserResult" type="cn.lexy.auth.page.UserPage">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="orgId" column="org_id"/>
+        <result property="isBuiltin" column="is_builtin"/>
+    </resultMap>
+
+    <sql id="baseSelect">
+        SELECT
+            id,
+            username,
+            nickname,
+            password,
+            org_id      AS orgId,
+            is_builtin  AS isBuiltIn,
+            create_time AS createTime,
+            update_time AS updateTime,
+            is_deleted  AS isDeleted
+        FROM mp_user
+    </sql>
+
+    <select id="getUserForLogin" parameterType="cn.lexy.auth.model.User" resultMap="UserResult">
+        <include refid="baseSelect"/>
+        where
+        is_deleted=0
+        and username = #{username}
+        and password = #{password}
+    </select>
+
+    <select id="listByFilter" resultMap="ResultMaps.User">
+        <include refid="baseSelect"/>
+        <where>
+            is_deleted = 0
+            <if test="null!=username and ''!=username">
+                AND username=#{username}
+            </if>
+        </where>
+    </select>
+    <select id="selectById" resultMap="ResultMaps.User">
+        <include refid="baseSelect"/>
+        WHERE id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO mp_user
+          (id, username, password, nickname, org_id, create_time, update_time)
+        VALUE
+          (#{id},#{username},md5(#{password}),#{nickname},#{orgId},#{createTime},#{updateTime})
+    </insert>
+    <update id="updateById">
+        UPDATE mp_user
+        <set>
+            <if test="null!=username and ''!=username">
+                username=#{username},
+            </if>
+            <if test="null!=password and ''!=password">
+                password=#{password},
+            </if>
+            <if test="null!=nickname and ''!=nickname">
+                nickname=#{nickname},
+            </if>
+            <if test="null!=orgId and ''!=orgId">
+                org_id=#{orgId},
+            </if>
+            <if test="null!=createTime and ''!=createTime">
+                create_time=#{createTime},
+            </if>
+            <if test="null!=updateTime and ''!=updateTime">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <update id="delete">
+        UPDATE mp_user SET is_deleted=1 WHERE id=#{id}
+    </update>
+
+    <delete id="clearRoles">
+        DELETE FROM mp_user_role WHERE user_id=#{userId}
+    </delete>
+
+    <insert id="assignRoles">
+        INSERT INTO mp_user_role
+        (id, user_id, role_id)
+        VALUES
+         <foreach collection="roles" item="role" separator="),(" open="(" close=")">
+             UUID_SHORT(),#{userId},#{role}
+         </foreach>
+    </insert>
+
+    <sql id="searchMenuColumns">
+        t.id,
+        t.text,
+        t.url,
+        t.pid,
+        t.seq
+    </sql>
+
+    <select id="listResourceUrlListByUserId" parameterType="string" resultType="string">
+        select
+        distinct url
+        from
+        mp_resource t
+        where id in (
+        select resource_id from mp_role_resource
+        where role_id in (select role_id from mp_user_role where user_id = #{userId})
+        )
+        and (t.url is not null <![CDATA[and t.url<>'']]> )
+    </select>
+
+    <select id="listRootMenuTreeByAuthUrls"  resultType="cn.lexy.auth.page.MenuPage">
+        select
+        <include refid="searchMenuColumns"/>
+        from
+        mp_menu t
+        where
+        (t.pid is null or t.pid='')
+        and id in (select pid from mp_menu where url in
+        <foreach collection="list" index="index" item="url" open="(" separator="," close=")">
+            #{url}
+        </foreach>
+        )
+        order by t.seq
+    </select>
+
+    <select id="listSubMenuTreeByAuthUrls"  resultType="cn.lexy.auth.page.MenuPage">
+        select
+        <include refid="searchMenuColumns"/>
+        from
+        mp_menu t
+        where
+        t.pid = #{param1}
+        and url in
+        <foreach collection="param2" index="index" item="url" open="(" separator="," close=")">
+            #{url}
+        </foreach>
+        order by t.seq
+    </select>
+
+    <update id="updpsw">
+        update
+        mp_user
+        set
+        password = #{param2}
+        where
+        id = #{param1}
+    </update>
+    
+    <select id="listResourceUrlListByUserIdAndModuleId" resultType="string">
+		select 
+            distinct url
+		from 
+			mp_resource t
+		where id in (
+			select resource_id from mp_role_resource 
+				where role_id in (select role_id from mp_user_role where user_id = #{param1})
+		)
+		<if test="param2 != null and param2 != ''">
+			and t.module_id = #{param2}
+		</if>
+  	</select>
+  	
+</mapper>

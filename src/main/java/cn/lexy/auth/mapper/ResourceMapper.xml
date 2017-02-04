@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lexy.auth.mapper.ResourceMapper">
+    <sql id="baseSelect">
+        SELECT
+            mp_resource.id,
+            mp_resource.text,
+            mp_resource.url,
+            mp_resource.pid,
+            mp_resource.seq,
+            mp_resource.hidden,
+            mp_resource.module_id,
+            mp_module.name AS module_name
+        FROM mp_resource
+            INNER JOIN mp_module
+                ON mp_module.id = mp_resource.module_id
+    </sql>
+    <select id="getRoot" resultMap="ResultMaps.Resource">
+        <include refid="baseSelect"/>
+        WHERE pid is null
+        <if test="null!=moduleId and ''!=moduleId">
+            and mp_resource.module_id=#{moduleId}
+        </if>
+        ORDER BY mp_resource.seq ASC
+    </select>
+
+    <select id="getChildren" resultMap="ResultMaps.Resource">
+        <include refid="baseSelect"/>
+        WHERE pid=#{pid}
+        ORDER BY mp_resource.seq ASC
+    </select>
+
+    <select id="listByFilter" resultMap="ResultMaps.Resource">
+        <include refid="baseSelect"/>
+        WHERE mp_module.hidden = 0 AND mp_resource.hidden = 0
+        ORDER BY mp_resource.seq ASC
+    </select>
+
+    <select id="getResourcesByRoleId" resultMap="ResultMaps.Resource">
+        SELECT
+            resource.id,
+            resource.hidden,
+            resource.module_id,
+            resource.pid,
+            resource.seq,
+            resource.text,
+            resource.url
+        FROM mp_role_resource
+            INNER JOIN mp_resource resource
+                ON mp_role_resource.resource_id = resource.id
+        WHERE role_id = #{roleId} AND hidden = 0
+        ORDER BY seq ASC
+    </select>
+
+    <select id="getResourcesByModuleId" resultMap="ResultMaps.Resource">
+        SELECT
+            resource.id,
+            resource.hidden,
+            resource.module_id,
+            resource.pid,
+            resource.seq,
+            resource.text,
+            resource.url
+        FROM mp_module
+            INNER JOIN mp_resource resource
+                ON mp_module.id = resource.module_id
+        WHERE module_id = #{moduleId} AND mp_module.hidden = 0
+        ORDER BY seq ASC
+    </select>
+
+    <select id="selectById">
+        <include refid="baseSelect"/>
+        WHERE mp_resource.id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO mp_resource (id, text, url, pid, seq, hidden, module_id)
+            VALUE
+            (#{id}, #{text}, #{url}, #{pid}, #{seq}, #{hidden}, #{module.id})
+    </insert>
+    <update id="updateById">
+        UPDATE mp_resource
+        <set>
+            <if test="null!=text and ''!=text">
+                text=#{text},
+            </if>
+            <if test="null!=url and ''!=url">
+                url=#{url},
+            </if>
+            <if test="null!=pid and ''!=pid">
+                pid=#{pid},
+            </if>
+            <if test="null!=seq">
+                seq=#{seq},
+            </if>
+            <if test="null!=module and null!=module.id and ''!=module.id">
+                module_id=#{module.id},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <update id="delete">
+        UPDATE mp_resource
+        SET hidden = 1
+        WHERE id = #{id}
+    </update>
+</mapper>

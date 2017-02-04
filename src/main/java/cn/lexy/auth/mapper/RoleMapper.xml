@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lexy.auth.mapper.RoleMapper">
+    <sql id="baseSelect">
+        SELECT
+            id,
+            name,
+            description,
+            is_builtin AS isBuiltIn
+        FROM mp_role
+    </sql>
+
+    <select id="getRolesByUserId" resultMap="ResultMaps.Role">
+        SELECT
+            mp_role.id,
+            mp_role.name,
+            mp_role.description,
+            mp_role.is_builtin AS isBuiltIn
+        FROM mp_user_role
+            INNER JOIN mp_role
+                ON mp_user_role.role_id = mp_role.id
+        WHERE mp_user_role.user_id = #{userId}
+    </select>
+
+    <select id="listByFilter" resultMap="ResultMaps.Role">
+        <include refid="baseSelect"/>
+        <where>
+            <if test="null!=name and ''!=name">
+                name=#{name}
+            </if>
+        </where>
+    </select>
+    <select id="selectById" resultMap="ResultMaps.Role">
+        <include refid="baseSelect"/>
+        WHERE id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO mp_role (id, name, description, is_builtin)
+            VALUE (#{id}, #{name}, #{description}, #{isBuiltIn})
+    </insert>
+    <insert id="assignResources">
+        INSERT INTO mp_role_resource (id, role_id, resource_id) VALUES
+        <foreach collection="resources" item="res" open="(" close=")" separator="),(">
+            UUID_SHORT(),#{roleId},#{res}
+        </foreach>
+    </insert>
+
+    <update id="updateById">
+        UPDATE mp_role
+        <set>
+            <if test="null!=name and ''!=name">
+                name = #{name},
+            </if>
+            <if test="null!=description and ''!=description">
+                description = #{description},
+            </if>
+            <if test="null!=isBuiltIn">
+                is_builtin = #{isBuiltIn}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM mp_role
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="clearResources">
+        DELETE FROM mp_role_resource
+        WHERE role_id=#{roleId} AND resource_id in (SELECT id from mp_resource WHERE module_id=#{moduleId})
+    </delete>
+</mapper>

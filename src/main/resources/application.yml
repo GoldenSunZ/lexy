@@ -1,0 +1,32 @@
+#server:
+#  context-path: lext-auth
+spring:
+  freemarker:
+    cache: true
+    charset: UTF-8
+    content-type: text/html
+    suffix: .html
+    template-loader-path: classpath:/WEB-INF/views/
+    expose-spring-macro-helpers: true
+    request-context-attribute: rca
+  datasource:
+    url: jdbc:log4jdbc:mysql://218.244.135.169:3318/lexy?useUnicode=true&characterEncoding=gbk&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: lexy_root
+    password: mapath#123
+    initial-size: 5
+#    driver-class-name: com.mysql.jdbc.Driver
+    max-active: 50
+    max-idle: 10
+    max-wait: 10000
+    test-on-borrow: true
+    min-idle: 5
+    validation-query: SELECT 1
+    test-while-idle: true
+    time-between-eviction-runs-millis: 18800
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+
+#logging:
+#  level: info
+#  pattern:
+#    console: %d %5p %c{1}:%L - %m%n
+
