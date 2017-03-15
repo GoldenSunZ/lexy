@@ -35,8 +35,12 @@ public class UserController {
     private RoleService roleService;
 
     @RequestMapping("list")
-    public String list(ModelMap model, @ModelAttribute HashMap<String,Object> filter,@ModelAttribute PageInfo pageInfo){
+    public String list(ModelMap model, @ModelAttribute HashMap<String,Object> filter,@ModelAttribute PageInfo pageInfo,@RequestParam(required = false)  String keyword){
         filter.put("page",pageInfo);
+        model.addAttribute("keyword",keyword);
+        if (keyword != null) {
+            filter.put("keyword", keyword);
+        }
         loadData(model,filter);
         return "user-mgr";
     }

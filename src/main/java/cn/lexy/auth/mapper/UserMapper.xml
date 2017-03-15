@@ -41,8 +41,12 @@
             <if test="null!=username and ''!=username">
                 AND username=#{username}
             </if>
+            <if test="null!=keyword and  ''!=keyword">
+                and (username like concat('%',trim(#{keyword}),'%') || nickname like concat('%',trim(#{keyword}),'%'))
+            </if>
         </where>
     </select>
+
     <select id="selectById" resultMap="ResultMaps.User">
         <include refid="baseSelect"/>
         WHERE id=#{id}

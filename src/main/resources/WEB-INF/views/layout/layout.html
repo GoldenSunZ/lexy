@@ -6,6 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
         <title>系统管理</title>
+        <link rel="stylesheet" href="${cpath}/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="${cpath}/css/basic.css"/>
         <link rel="stylesheet" href="${cpath}/css/select2.min.css"/>
         <link rel="stylesheet" href="${cpath}/css/jquery.pnotify.css"/>
@@ -45,8 +46,11 @@
             <div class="sidebar_toggle"><span class="txt">关闭</span><span class="icon-closeNav"></span></div>
             <ul class="sidebar_menu">
                 <li class="sidebar_hasChild on">
-                    <a class="sidebar_title" href="javascript:void(0);"><span class="icon-legal"></span><span
-                            class="menu_title">权限设置</span><span class="icon-arrow-right"></span></a>
+                    <a class="sidebar_title" href="javascript:void(0);">
+                        <span class="icon-legal"></span>
+                        <span class="menu_title">权限设置</span>
+                        <span class="icon-arrow-right"></span>
+                    </a>
                     <ol class="sidebar_Child_ol">
                         <#if selId="role">
                             <li><a href="${cpath}/role-mgr.html" class="active">角色管理</a></li>

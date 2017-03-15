@@ -11,8 +11,16 @@
     </ol>
     <div class="outBox">
         <div class="outBox-inner">
-            <div class="input_button" style="float: none;">
-                <button class="blueBg wp100" id="pro_add">新增</button>
+            <div class="row">
+                <div class="input_button">
+                    <button class="blueBg wp100" id="pro_add">新增</button>
+                </div>
+                <div>
+                    <form method="post" action="${cpath}/user/list">
+                        <input type="text" value="${keyword!}" name="keyword" placeholder="输入ID或姓名" style="width: 350px;height: 30px">
+                        <button class="blueBg" type="submit" style="height: 30px;width: 160px">查询</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

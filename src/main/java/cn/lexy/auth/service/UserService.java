@@ -1,16 +1,5 @@
 package cn.lexy.auth.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import cn.lexy.auth.config.LexyAuthConstants;
 import cn.lexy.auth.exception.CheckParamException;
 import cn.lexy.auth.mapper.UserMapper;
@@ -19,6 +8,12 @@ import cn.lexy.auth.model.User;
 import cn.lexy.auth.page.MenuPage;
 import cn.lexy.auth.page.UserPage;
 import cn.lexy.auth.util.MD5;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 /**
  * Created by john on 16/8/7.
